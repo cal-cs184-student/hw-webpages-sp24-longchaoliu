@@ -1,7 +1,201 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 1 index.html here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184/284A Rasterizer</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184/284A: Computer Graphics and Imaging, Spring 2024</h1>
+<h1 align="middle">Homework 1: Rasterizer</h1>
+<h2 align="middle">Joy Liu and Rohan Mathur</h2>
+
+<br><br>
+
+<div>
+
+<h2 align="middle">Overview</h2>
+<p>Give a high-level overview of what you implemented in this homework Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</p>
+
+<h2 align="middle">Section I: Rasterization</h2>
+<p><strong>Walk through how you rasterize triangles in your own words:</strong><br>
+First, we create a bounding box around the triangle by identifying the minimum and maximum height and width coordinates. For each point within this bounding box, we performed the point-in-triangle test in both clockwise and counterclockwise directions. We assigned points inside the triangle to Color in the sample buffer. 
+</p>
+<p><strong>Explain how your algorithm is no worse than one that checks each sample within the bounding box of the triangle:</strong><br>
+Our algorithm did exactly that. We define a bounding box with the minimum and maximum x and y coordinates of the triangle and run line tests on all the pixels.
+</p>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task1/interesting.png" align="middle" width="400px"/>
+        <figcaption align="middle">That's some interesting sampling.....</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 2: Antialiasing triangles</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task2/01.png" align="middle" width="300px"/>
+        <figcaption align="middle">Sample rate: 1 (no supersampling)</figcaption>
+      </td>
+      <td>
+        <img src="images/task2/04.png" align="middle" width="300px"/>
+        <figcaption align="middle">Sample rate: 4</figcaption>
+      </td>
+      <td>
+        <img src="images/task2/16.png" align="middle" width="300px"/>
+        <figcaption align="middle">Sample rate: 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+
+<h3 align="middle">Part 3: Transforms</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task3/my_robot.png" align="middle" />
+        <figcaption align="middle">This is robot guy trying to do an ollie but he didn't time the kick properly so he's falling</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section II: Sampling</h2>
+
+<h3 align="middle">Part 4: Barycentric coordinates</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task4/color_triangle.png" align="middle" width="400px"/>
+        <figcaption align="middle">wow blendy triangle</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/task4/color_wheel.png" align="middle" width="400px"/>
+        <figcaption align="middle">wow blendy color wheel</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task5/nearest_1.png" align="middle" width="500px"/>
+        <figcaption align="middle">Nearest without supersampling</figcaption>
+      </td>
+      <td>
+        <img src="images/task5/nearest_16.png" align="middle" width="500px"/>
+        <figcaption align="middle">Nearest with sample rate of 16</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/task5/bilinear_1.png" align="middle" width="500px"/>
+        <figcaption align="middle">Bilinear without super sampling</figcaption>
+      </td>
+      <td>
+        <img src="images/task5/bilinear_16.png" align="middle" width="500px"/>
+        <figcaption align="middle">Bilinear with sample rate of 16</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/task6/l_zero_p_nearest.png" align="middle" width="500px"/>
+        <figcaption align="middle">Level 0 mipmap, nearest pixel sampling</figcaption>
+      </td>
+      <td>
+        <img src="images/task6/l_zero_p_linear.png" align="middle" width="500px"/>
+        <figcaption align="middle">Level 0 mipmap, bilinear pixel sampling</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/task6/l_nearest_p_nearest.png" align="middle" width="500px"/>
+        <figcaption align="middle">Nearest mipmap, nearest pixel sampling</figcaption>
+      </td>
+      <td>
+        <img src="images/task6/l_nearest_p_linear.png" align="middle" width="500px"/>
+        <figcaption align="middle">Nearest mipmap, bilinear pixel sampling</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h2 align="middle">Section III: Art Competition</h2>
+<p>If you are not participating in the optional art competition, don't worry about this section!</p>
+
+<h3 align="middle">Part 7: Draw something interesting!</h3>
+
+<div align="middle">
+  <table style="width=100%">
+    <tr>
+      <td>
+        <img src="images/image1.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image2.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+    <br>
+    <tr>
+      <td>
+        <img src="images/image3.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+      <td>
+        <img src="images/image4.png" align="middle" width="400px"/>
+        <figcaption align="middle">Caption goes here.</figcaption>
+      </td>
+    </tr>
+  </table>
+</div>
+
+</body>
 </html>
