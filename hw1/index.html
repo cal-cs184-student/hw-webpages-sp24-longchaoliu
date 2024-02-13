@@ -32,7 +32,7 @@
 <div>
 
 <h2 align="middle">Overview</h2>
-<p>Give a high-level overview of what you implemented in this homework Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.</p>
+<p>What we have done in this homework is build a baseline rendering system of shapes and textures in a way that allows the viewer to almost forget that they are viewing discrete pixels and helps them visualize continuous space. One interesting thing we learned completing the homework is that many functional solutions are quite inelegant. For example, requiring 6 line tests to see if a point is in a triangle feels excessive but is in fact necessary.</p>
 
 <h2 align="middle">Section I: Rasterization</h2>
 <p><strong>Walk through how you rasterize triangles in your own words:</strong><br>
@@ -54,6 +54,17 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
 </div>
 
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
+
+<p>
+  <strong>Walk through your supersampling algorithm and data structures:</strong>
+  <br>
+  In our supersampling algorithm, when rasterizing, we supposed we were rendering to a screen that’s sample_rate times bigger than the actual screen. In order to represent this, we adjusted the sample buffer to store sample_rate colors for each pixel. When we resolve to framebuffer, we average the pixels to depict them at our actual screen size. We also adjusted point and line rasterization to obey supersampling logic.
+</p>
+<p>
+  <strong>Why is supersampling useful?</strong>
+  <br>
+  Supersampling is useful because it captures gradations in color based on how much of a pixel contains a certain signal. Supersampling is a form of antialiasing, because by increasing the number of samples taken within each pixel, we are able to capture higher frequency information.
+</p>
 
 <div align="middle">
   <table style="width=100%">
