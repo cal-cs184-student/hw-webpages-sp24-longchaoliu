@@ -56,7 +56,7 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
 <h3 align="middle">Part 2: Antialiasing triangles</h3>
 
 <p>
-  <strong>Walk through your supersampling algorithm and data structures:</strong>
+  <strong>Walk through of supersampling algorithm and data structures/changes made to the rasterization pipeline:</strong>
   <br>
   In our supersampling algorithm, when rasterizing, we supposed we were rendering to a screen that’s sample_rate times bigger than the actual screen. In order to represent this, we adjusted the sample buffer to store sample_rate colors for each pixel. When we resolve to framebuffer, we average the pixels to depict them at our actual screen size. We also adjusted point and line rasterization to obey supersampling logic.
 </p>
@@ -85,6 +85,10 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
   </table>
 </div>
 
+<p>
+  <strong>How does supersampling antialias the triangles?</strong><br>
+  With a sample rate of 1, we often fail to catch whether a pixel should have color as not. As the sample rate increases, we have a more fine-grained system of antialiasing that captures more high frequency information.
+</p>
 
 <h3 align="middle">Part 3: Transforms</h3>
 
@@ -102,7 +106,10 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
 <h2 align="middle">Section II: Sampling</h2>
 
 <h3 align="middle">Part 4: Barycentric coordinates</h3>
-
+<p>
+  <strong>How do barycentric coordinates work?</strong><br>
+  Barycentric coordinates are essentially unit normalized triangular coordinates. The higher the coordinate value is for one of the corners, the closer the value is to that corner. So, the coordinates for the corners are (1, 0, 0), (0, 1, 0), and (0, 0 ,1). On the triangle pictured below, you can see that at each corner of the triangle, the colors are completely either red, green, or blue. As you move away from the corners, the values for the other 2 coordinates increase and the color gets more blended. The very middle is an equal blend of the 3 colors, just as the coordinates would be (⅓, ⅓, ⅓).
+</p>
 <div align="middle">
   <table style="width=100%">
     <tr>
@@ -122,7 +129,10 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
 </div>
 
 <h3 align="middle">Part 5: "Pixel sampling" for texture mapping</h3>
-
+<p>
+  <strong>What is pixel sampling? How did we implement it to perform texture mapping?</strong><br>
+  We only encode texture information at certain locations in the texture map, but we need to convert the texture to the continuous pixel space. We do so by calculating the barycentric coordinates of the point within the triangle, and converting this to uv space. In uv space, we either round our point to the nearest uv coordinate, or we use bilinear interpolation to combine information from all four coordinates surrounding the point. 
+</p>
 <div align="middle">
   <table style="width=100%">
     <tr>
@@ -149,7 +159,27 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
   </table>
 </div>
 
+<p>
+  <strong>Comparisons and relative differences:</strong><br>
+  In this example, the red dotted line should be evenly spaced out. Without supersampling, with nearest pixel sampling, the red dotted line is clumped toward the right of the image, then disappears, and the signal is aliasing as a lower frequency dotted line. With bilinear pixel sampling, interpolation helps retrieve the original line, and it looks much more evenly spaced. 
+  With supersampling, the difference is lessened, but the bilinear sampling dotted line still looks slightly straighter.
+  <br>
+  As seen in the example, bilinear sampling is slightly better than nearest sampling, but supersampling still provides the greatest performance increases. There will be the greatest if there are high frequency alternating stripes of color, because nearest sampling will only depict the colors at the uv coordinates, whereas bilinear sampling interpolates values so it can show a gradient.
+</p>
+
 <h3 align="middle">Part 6: "Level sampling" with mipmaps for texture mapping</h3>
+
+<p>
+  <strong>What is level sampling and how did we implement it?</strong><br>
+  Level sampling is the idea that the closer something is to the camera, the more high frequency details should be depicted in the pixel space. By fixing the change (dx, dy) in pixel space and calculating the corresponding change in (du, dv) in texture space, if the texture vector magnitude is large, then we know that the image is close, and we should use a high resolution mip level, and vice versa.
+  <br>
+  <strong>We can now adjust your sampling technique by selecting pixel sampling, level sampling, or the number of samples per pixel. What are the tradeoffs between speed, memory usage, and antialiasing power between the three various techniques?
+  </strong><br>
+  <strong>Supersampling</strong> at rate k provides the highest antialiasing power, but it also requires the most time, O(kN), where N is the number of pixels. The space prerequisite is asymptotic in the size of the real image. The sampling process itself also requires O(kN) in memory.<br> 
+  <strong>Level sampling</strong> requires the most memory–4/3 of the size of the real image to store all the mip levels. Sampling requires O(N) space and memory, plus a constant number of calculations for zero, nearest, or level sampling. The antialiasing effects are comparable to pixel sampling.<br>
+  <strong>Pixel sampling</strong> is also asymptotic in the size of the real image, with sampling requiring O(N) space and memory, plus a constant number of calculations for nearest versus bilinear sampling. 
+
+</p>
 
 <div align="middle">
   <table style="width=100%">
@@ -172,37 +202,6 @@ Our algorithm did exactly that. We define a bounding box with the minimum and ma
       <td>
         <img src="images/task6/l_nearest_p_linear.png" align="middle" width="500px"/>
         <figcaption align="middle">Nearest mipmap, bilinear pixel sampling</figcaption>
-      </td>
-    </tr>
-  </table>
-</div>
-
-<h2 align="middle">Section III: Art Competition</h2>
-<p>If you are not participating in the optional art competition, don't worry about this section!</p>
-
-<h3 align="middle">Part 7: Draw something interesting!</h3>
-
-<div align="middle">
-  <table style="width=100%">
-    <tr>
-      <td>
-        <img src="images/image1.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-      <td>
-        <img src="images/image2.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-    </tr>
-    <br>
-    <tr>
-      <td>
-        <img src="images/image3.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
-      </td>
-      <td>
-        <img src="images/image4.png" align="middle" width="400px"/>
-        <figcaption align="middle">Caption goes here.</figcaption>
       </td>
     </tr>
   </table>
