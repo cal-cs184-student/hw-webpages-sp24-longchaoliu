@@ -1,0 +1,9 @@
+without bvh:
+banana: 22.5457s
+bunny : 222.4012s
+cow   : 41.9720s
+
+with bvh:
+bunny : 0.1317s
+banana: 0.1278s
+cow   : 0.1702s
